@@ -1,5 +1,6 @@
 from django.test import TestCase
 
 # Create your tests here.
-def testwqeqwe:
+
+def test():
   print("hola")
