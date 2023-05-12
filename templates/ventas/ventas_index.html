@@ -1,0 +1,65 @@
+    {% extends 'layouts/base.html' %}
+    {% load static %}
+
+        {% block title %} Bienvenida {% endblock title %}
+
+        {% block style %}
+        <style type="text/css">
+            .animation{
+                width: 100px;
+                background-color: blue;
+                padding:20px;
+                font-weight: bold;
+                position:absolute;
+                border-radius: 20px;
+
+            }
+            #titulo{
+                font-family: 'Courier New', Courier, monospace;
+                font-size: 40px;
+                margin:0px;
+                color: white;
+
+            }
+            .containter{
+                max-width: 800px;
+                margin: auto;
+                
+            }
+        </style>
+        {% endblock style%}
+
+        {% block content %}
+        <div class="row" style="margin: 250px;">
+            <div class="col-3"></div>
+            <div class="col-6" id="tabla">
+                <div style="display: none" id="welcome" class="animation" >
+                    <h1 id="titulo" style="display: none">Bienvenido</h1>
+                </div>
+            </div>
+            <div class="col-3"></div>
+
+        </div>
+
+        {% endblock content %}
+        {% block scripts %}
+        <script type="text/javascript">
+            $(document).ready(function(){
+                let div = $("div#welcome");
+                let titulo = $("#titulo");
+                div.show("slow");
+                div.animate({height: '250px', opacity: '0.6', backgroundColor: 'red'}, "slow");
+                div.animate({width: '250px', opacity: '0.9', backgroundColor: 'yelow'}, "slow");
+                div.animate({height: '48px', opacity: '0.6', backgroundColor: 'green'}, "slow");
+                div.animate({opacity: '09'}, "slow").promise().done(function(){
+                    titulo.show("slow").delay(500).promise().done(function(){
+                        div.animate({left:"1000"}, "slow").promise().done(function(){
+                            div.fadeOut("slow");
+                            div.css({right:"1000"})
+                        });
+                    });
+                })
+            });
+        </script>
+        
+        {% endblock scripts %}
