@@ -3,3 +3,4 @@ from ventas.models import Productos
 
 # Register your models here.
 admin.site.register(Productos)
+#comentario de prueba
