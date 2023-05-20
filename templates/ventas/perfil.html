@@ -1,0 +1,21 @@
+{% extends 'layouts/base.html' %}
+{% load static %}
+
+    {% block title %} Bienvenida {% endblock title %}
+
+    {% block content %}
+    <div class="container-fluid h-custom">
+        <div class="row d-flex justify-content-center align-items-center h-100">
+          
+          <div class="col-md-8 col-lg-6 col-xl-4 offset-xl-1">
+              <h2><strong>nombre: </strong>{{ persona.nombre }}</h2>
+              <h2><strong>apellidos: </strong>{{ persona.apellidos }}</h2>
+              <h2><strong>calle: </strong>{{ persona.calle }}</h2>
+              <h2><strong>colonia: </strong>{{ persona.colonia }}</h2>
+              <h2><strong>codigo_postal: </strong>{{ persona.codigo_postal }}</h2>
+              <h2><strong>estado: </strong>{{ persona.estado.value }}</h2>
+          </div>
+        </div>
+      </div>
+
+    {% endblock content %}

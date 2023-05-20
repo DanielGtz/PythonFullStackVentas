@@ -3,11 +3,7 @@
 {% block title %} Productos {% endblock title %}
 
 {% block style %}
-        <style>
-        .containter{
-            margin: 90px;
-        }
-    </style>
+        
 {% endblock style %}
 
 {% block content %}
@@ -20,6 +16,7 @@
                             <th>Nombre de Producto</th>
                             <th>Descripción</th>
                             <th>Precio</th>
+                            <th>Archivo</th>
                             <th>Acciones</th>
                         </tr>
                             {% if productos %}
@@ -28,6 +25,11 @@
                                         <td id="{{producto.id}}_nombre">{{ producto.nombre }}</td>
                                         <td id="{{producto.id}}_descripcion">{{ producto.descripcion }}</td>
                                         <td id="{{producto.id}}_precio">{{ producto.precio }}</td>
+                                        {% if producto.archivos %}
+                                        <td id="{{producto.id}}_archivo"><a target="blank" href="{{ producto.archivos.url }}">{{ producto.archivos.name }}</a></td>
+                                        {%else %}
+                                        <td id="{{producto.id}}_archivo">Sin archivo</td>
+                                        {% endif %}
                                         <td>
                                             <button class="btn btn-primary" onclick="editar({{producto.id}})"> Editar </button>
                                             <button class="btn btn-danger" onclick="eliminar({{producto.id}})"> Eliminar </button>
@@ -45,20 +47,28 @@
                 </div>
                 <hr>
                 <div class="col-12 mt-5">
-                    <form action="{% url 'productos' %}" method="POST" id="producto_form">
+                    <form action="{% url 'productos' %}" method="POST" id="producto_form" enctype="multipart/form-data">
                         {% csrf_token %}
                         <div class="mb-3">
-                            <label for="exampleInputnombre1" class="form-label">Nombre de producto*</label>
-                            <input type="text" name="nombre"  class="form-control" id="nombre" aria-describedby="nombreHelp" required>
+                            {{formProductos.nombre.label}}
+                            {{formProductos.nombre}}
                           </div>
                           <div class="mb-3">
-                            <label for="exampleInputDescriptcion1" class="form-label">Descripción*</label>
-                            <textarea name="descripcion" class="form-control" id="descripcion" aria-describedby="DescripcionHelp" required></textarea>
+                            {{formProductos.descripcion.label}}
+                            {{formProductos.descripcion}}
                           </div>
                           <div class="mb-3">
-                            <label for="exampleInputPrecio1" class="form-label">Precio*</label>
-                            <input name="precio" type="number" class="form-control" id="precio" aria-describedby="PrecioHelp" required>
-                          </div>
+                            {{formProductos.precio.label}}
+                            {{formProductos.precio}}
+                        </div>
+                        <div class="mb-3">
+                            {{formProductos.archivos.label}}
+                            {{formProductos.archivos}}
+                        </div>
+                        <div class="mb-3">
+                            {{formProductos.activo.label}}
+                            {{formProductos.activo}}
+                        </div>
                           <input type="hidden" id="id_formulario">
                           <button id="boton_guardar" type="button" onclick="guardarDato()" class="btn btn-primary">Guardar</button>
                           <button id="boton_actualizar" type="button" class="btn btn-primary" style="display: none;">Guardar</button>
@@ -90,22 +100,22 @@
 
     }
     function borarFormulario(){
-        $("#nombre").val("")
-        $("#descripcion").val("")
-        $("#precio").val("")
+        $("#id_nombre").val("")
+        $("#id_descripcion").val("")
+        $("#id_precio").val("")
     }
     function validarFormulario(){
         let error = false
-        if($("#nombre").val()==""){
-            $("#nombre").addClass("is-invalid")
+        if($("#id_nombre").val()==""){
+            $("#id_nombre").addClass("is-invalid")
             error = true
         }
-        if($("#descripcion").val()==""){
-            $("#descripcion").addClass("is-invalid")
+        if($("#id_descripcion").val()==""){
+            $("#id_descripcion").addClass("is-invalid")
             error = true
         }
-        if($("#precio").val()==""){
-            $("#precio").addClass("is-invalid")
+        if($("#id_precio").val()==""){
+            $("#id_precio").addClass("is-invalid")
             error = true
         }
         return error
@@ -114,15 +124,10 @@
     let id = 1;
 
     function guardarDato(){
-        /*let nombre = $("#nombre").val();
-        let descripcion = $("#descripcion").val();
-        let edad = $("#precio").val();*/
+        
         let formHasError = validarFormulario()
         if(!formHasError){
-            /*let botones = "<td><button type='button' class='btn btn-secondary' onclick='editar("+id+")'>Editar</button></td>"
-            let fila = "<tr id='"+id+"_fila'><td id="+id+"_nombre >"+nombre+"</td><td id="+id+"_descripcion>"+descripcion+"</td><td id="+id+"_edad>"+edad+"</td>"+botones+"<tr>"
-            $('#tabla').append(fila)
-            id++*/
+            
             $("#producto_form").submit()
         }
     }
@@ -134,32 +139,32 @@
         let descripcion = $("#"+id+"_descripcion").text()
         let precio = $("#"+id+"_precio").text()
         $("#id_formulario").val(id)
-        $("#nombre").val(nombre)
-        $("#descripcion").val(descripcion)
-        $("#precio").val(precio)
+        $("#id_nombre").val(nombre)
+        $("#id_descripcion").val(descripcion)
+        $("#id_precio").val(precio)
 
     }
     function clearError(){
-        $("#nombre").removeClass("is-invalid")
-        $("#descripcion").removeClass("is-invalid")
-        $("#precio").removeClass("is-invalid")
+        $("#id_nombre").removeClass("is-invalid")
+        $("#id_descripcion").removeClass("is-invalid")
+        $("#id_precio").removeClass("is-invalid")
 
     }
-    $("#nombre").on('input',function(){
+    $("#id_nombre").on('input',function(){
         $(this).removeClass("is-invalid")
     });
-    $("#descripcion").on('input',function(){
+    $("#id_descripcion").on('input',function(){
         $(this).removeClass("is-invalid")
     });
-    $("#precio").on('input',function(){
+    $("#id_precio").on('input',function(){
         $(this).removeClass("is-invalid")
     });
     $("#boton_actualizar").click(function(){
         
         let id = $("#id_formulario").val()
-        let nombre = $("#nombre").val();
-        let descripcion = $("#descripcion").val();
-        let precio = $("#precio").val();
+        let nombre = $("#id_nombre").val();
+        let descripcion = $("#id_descripcion").val();
+        let precio = $("#id_precio").val();
         let formHasError = validarFormulario()
         if(!formHasError){
      $.ajax({
