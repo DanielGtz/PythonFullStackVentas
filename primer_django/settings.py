@@ -41,9 +41,18 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'django_postalcodes_mexico.apps.DjangoPostalcodesMexicoConfig',
     'ventas',
+    'api', 
+    'rest_framework',
+    'rest_framework_simplejwt',
 ]
 
+REST_FRAMEWORK = {
+    'DEFAULT_AUTHENTICATION_CLASSES': (
+        'rest_framework_simplejwt.authentication.JWTAuthentication',
+    )
+}
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
@@ -70,6 +79,9 @@ TEMPLATES = [
             ],
         },
     },
+]
+FIXTURE_DIRS = [
+    os.path.join(BASE_DIR, "fixtures"),
 ]
 
 WSGI_APPLICATION = 'primer_django.wsgi.application'

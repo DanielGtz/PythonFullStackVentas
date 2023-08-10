@@ -10,7 +10,12 @@ urlpatterns = [
     path('logout', views.logoutCustom, name='logout'),
     path('servidor', views.ServidorViews.as_view(), name='servidor'),
     path('productos', views.ProductosView.as_view(), name='productos'),
+    path('solicitud', views.solicitud, name='solicitud'),
     path('perfil', views.perfil_view, name='perfil'),
     path('ajaxEditarProductos', views.editar_productos, name='ajaxEditarProductos'),
     path('ajaxEliminarProductos', views.eliminar_producto, name='ajaxEliminarProductos'),
+    path('ajaxFiltro', views.filtro_productos, name='ajaxFiltro'),
+    path('ajaxFiltarEstados', views.filtrar_estados, name='ajaxFiltarEstados'),
+    path('graficas', views.graficas, name='graficas'),
+
 ]

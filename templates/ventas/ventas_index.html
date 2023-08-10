@@ -2,8 +2,8 @@
     {% load static %}
 
         {% block title %} Bienvenida {% endblock title %}
-
         {% block style %}
+
         <style type="text/css">
             .animation{
                 width: 100px;
@@ -32,7 +32,7 @@
         {% block content %}
         <div class="row" style="margin: 250px;">
             <div class="col-3"></div>
-            <div class="col-6" id="tabla">
+            <div class="col-6" id="">
                 <div style="display: none" id="welcome" class="animation" >
                     <h1 id="titulo" style="display: none">Bienvenido</h1>
                 </div>
@@ -40,11 +40,101 @@
             <div class="col-3"></div>
 
         </div>
+        
+        <div class="containter">
+            <div class="row">
+                <div class="col-3">
+                    <form method="POST" id="formPage">
+                        {% csrf_token %}
+                        <input name="page" id="page" hidden>
+                        <select class="form-select"id="select_page_size" name="page_size">
+                            <option value="10" selected>10</option>
+                            <option value="20">20</option>
+                            <option value="50">50</option>
+                            <option value="100">100</option>
+                        </select>
+                    </form>
+                </div>
+                <div class="col-12 mt-5">
+                    <table class="table" id="tabla_solicitudes">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Descripción</th>
+                                <th>Dirección</th>
+                                <th>Fecha</th>
+                                <th>Imagen</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+
+                            {% if solicitudes %}
+                                {% for solicitud in solicitudes %}
+                                    <tr id="{{solicitud.id}}_fila">
+                                        <td id="{{solicitud.id}}_nombre">{{ solicitud.request_id }}</td>
+                                        <td id="{{solicitud.id}}_descripcion">{{ solicitud.descripcion }}</td>
+                                        <td id="{{solicitud.id}}_precio">{{ solicitud.address }}</td>
+                                        <td id="{{solicitud.id}}_precio">{{ solicitud.requested_datetime }}</td>
+                                        {% if solicitud.media_url %}
+                                            <td id="{{solicitud.id}}_archivo"><a target="blank" href="{{ solicitud.media_url }}">Imagen</a></td>
+                                        {%else %}
+                                            <td id="{{solicitud.id}}_archivo">Sin imagen</td>
+                                        {% endif %}
+                                    </tr>
+                                {% endfor %}
+                            {% else %}
+                            <tr>
+                                <th>NO HAY PRODUCTOS REGISTRADOS</th>
+                            <tr>
+                            {% endif %}
+                        </tbody>
+                    </table>
+                </div>
+                        <div class="pagination col-12">
+                        <span class="step-links">
+                            {% if solicitudes.has_previous %}
+                                <button class="btn btn-outline-primary btn-sm" onclick="submitForm()">Primero</a>
+                                <button class="btn btn-outline-primary btn-sm" onclick="submitForm({{previous_page_number}})">Anterior</button>
+                            {% endif %}
+
+                            {%for p in paginas%}
+                                {%if p is solicitudes.number%}
+                                <button class="btn btn-primary btn-sm" >{{p}}</button>
+                                {%else%}
+                                <button class="btn btn-outline-primary btn-sm" onclick="submitForm({{p}})">{{p}}</button>
+                                {%endif%}
+                            {%endfor%}
+
+
+                    
+                            
+                    
+                            {% if solicitudes.has_next %}
+                                <button class="btn btn-outline-primary btn-sm" onclick="submitForm({{next_page_number}})">Siguiente</a>
+                                <button class="btn btn-outline-primary btn-sm" onclick="submitForm({{last}})">Último</button>
+                            {% endif %}
+                        </span>
+                        </div>
+                        <div class="col-12">
+                            <span class="current" style="text-align:center;">
+                                Pagina {{ solicitudes.number }} de {{ solicitudes.paginator.num_pages }}.
+                            </span>
+                        </div>
+                  
+            </div>
+        </div>
+    </div>
+                
 
         {% endblock content %}
         {% block scripts %}
         <script type="text/javascript">
+
             $(document).ready(function(){
+                var page_size = '{{page_size}}'
+                $("#select_page_size").val(page_size)
+
+
                 let div = $("div#welcome");
                 let titulo = $("#titulo");
                 div.show("slow");
@@ -60,6 +150,16 @@
                     });
                 })
             });
+            function submitForm(id = 1){
+                $('#page').val(id)
+                $("#formPage").submit()
+            }
+            $('#select_page_size').change(function(){
+                submitForm()
+            })
+
+
+
         </script>
         
         {% endblock scripts %}

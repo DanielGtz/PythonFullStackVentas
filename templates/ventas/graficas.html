@@ -1,0 +1,128 @@
+{% extends 'layouts/base.html' %}
+
+{% block title %} Inicio {% endblock title %}
+
+<!-- Specific CSS goes HERE -->
+{% block style %}
+
+{% endblock style %}
+{% block content %}
+
+<div class="container">
+
+    <div class="header pb-6 mt-4">
+      <div class="container-fluid">
+        <div class="header-body">
+      <div class="row">
+        <div class="col-xl-12">
+          <div class="card">
+            <div class="card-header border-0">
+              <div class="row align-items-center">
+                <div class="col-12">
+                  <h1 class="mb-0 color-primario">Graficas con Chart.js</h1>
+                </div>
+                <div class="col-12">
+                  <canvas id="myChart"></canvas>
+                </div>
+                <div class="col-12">
+                    <canvas id="reportes_mensuales"></canvas>
+                </div>
+
+              </div>
+            </div>
+        
+          </div>
+        </div>
+      </div>
+      </div>
+      </div>
+
+</div>
+    
+
+    </div>
+
+</div>
+
+{% endblock content %}
+
+
+{% block scripts %}
+
+<script type='text/javascript'>
+  const ctx = document.getElementById('myChart');
+
+  new Chart(ctx, {
+    type: 'bar',
+    data: {
+      labels: ['Rojo', 'Azul', 'Amarillo', 'Verde', 'Morado', 'Naranja'],
+      datasets: [{
+        label: 'Numero de votos',
+        data: [12, 19, 3, 5, 2, 3],
+        borderWidth: 1
+      }]
+    },
+    options: {
+      indexAxis: 'x',
+      scales: {
+          y: {
+            display: true,
+            title: {
+                display: true,
+                text: "Cantidad de votos"
+            }
+          },
+        x: {
+            display: true,
+            title: {
+                display: true,
+                text: "Colores"
+            },
+          beginAtZero: true
+        }
+      }
+    }
+  });
+  meses = "{{meses}}"
+  var meses_array = JSON.parse(meses)
+  console.log(meses_array)
+  var data = {
+      labels: ['Enero','Febrero','Marzo','Abril','Mayo','Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre','Diciembre'],
+      datasets: [{
+        label: 'Numero de reportes',
+        data: meses_array,
+        borderWidth: 2,
+        borderColor: "black",
+        backgroundColor: ['rgba(0, 128, 0, .3)',"yellow","blue","red","orage","pink","gray"],
+        fill:true
+      }]
+    }
+  var options = {
+      scales: {
+          y: {
+            display: true,
+            title: {
+                display: true,
+                text: "Cantidad de reportes"
+            }
+          },
+        x: {
+            display: true,
+            title: {
+                display: true,
+                text: "Meses"
+            },
+          beginAtZero: true
+        }
+      }
+    }
+
+  var reportes_mensuales = new Chart('reportes_mensuales', {
+    type: 'pie',
+    data: data,
+    options: options
+  });
+
+
+</script>
+{% endblock scripts %}

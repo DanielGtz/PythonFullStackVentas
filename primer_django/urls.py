@@ -18,10 +18,13 @@ from django.conf import settings
 from django.conf.urls.static import static
 from django.contrib import admin
 from django.urls import path, include
+from django_postalcodes_mexico import urls as django_postalcodes_mexico_urls
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('', include('ventas.urls')),
+    path('libros/', include('api.urls')),
+    path('cp-', include(django_postalcodes_mexico_urls)),
 ]  
 
 urlpatterns += static(settings.MEDIA_URL, document_root= settings.MEDIA_ROOT)
