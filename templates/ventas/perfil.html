@@ -4,18 +4,49 @@
     {% block title %} Bienvenida {% endblock title %}
 
     {% block content %}
-    <div class="container-fluid h-custom">
-        <div class="row d-flex justify-content-center align-items-center h-100">
+    <div class="container">
+        <div class="row">
           
-          <div class="col-md-8 col-lg-6 col-xl-4 offset-xl-1">
-              <h2><strong>nombre: </strong>{{ persona.nombre }}</h2>
-              <h2><strong>apellidos: </strong>{{ persona.apellidos }}</h2>
-              <h2><strong>calle: </strong>{{ persona.calle }}</h2>
-              <h2><strong>colonia: </strong>{{ persona.colonia }}</h2>
-              <h2><strong>codigo_postal: </strong>{{ persona.codigo_postal }}</h2>
-              <h2><strong>estado: </strong>{{ persona.estado.value }}</h2>
+          <div class="col-12">
+            <form>
+              {{personasForm.as_p}}
+            </form>
+          
           </div>
         </div>
       </div>
 
     {% endblock content %}
+    {% block scripts %}
+    <script>
+      $(document).ready(function(){
+        $("#id_municipio").attr("disabled","disabled")
+      });
+      $("#id_estado").change(function(){
+        id_estado = $(this).val()
+        $.ajax({
+        method: "POST",
+        url: "{% url 'ajaxFiltarEstados' %}",
+        headers: {
+            'X-CSRFToken':'{{ csrf_token }}'
+        },
+        data: {
+              "id_estado":id_estado
+            },
+        success: function(response){
+            $("#id_municipio").removeAttr("disabled")
+            opcion = ""
+            $("#id_municipio").html("<option value=''>-----</opcion>")
+            $.each( response["municipios"], function( key, value ){
+                opcion += "<option value='"+value.id+"'>"+value.nombre+"</opcion>"
+            });
+            $("#id_municipio").append(opcion)
+            
+         
+       
+        }
+      });
+      });
+    </script>
+    {% endblock scripts %}
+

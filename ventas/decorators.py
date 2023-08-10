@@ -23,3 +23,14 @@ def user_has_group(group_names):
                 return redirect('login')
         return _wrapped_view
     return decorator
+
+def print_hello(nombre):
+    def decorator(view_func):
+        def _wrapped_view(request, *args, **kwargs):
+            print(f'Hola, {nombre}. Este es el inicio de mi decorador')
+            respuesta = view_func(request, *args, **kwargs)
+            print(f'Adiós, {nombre}. Este es el final de mi decorador')
+            return respuesta
+        return _wrapped_view
+    return decorator
+

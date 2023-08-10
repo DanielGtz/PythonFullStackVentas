@@ -8,41 +8,69 @@
 
 {% block content %}
        
-        <div class="containter">
+        <div class="container">
             <div class="row">
                 <div class="col-12 mt-5">
+                    <form>
+                        <div class="row">
+                            {% csrf_token %}
+                            <div class="col-3 mb-3">
+                                {{formProductosFiltro.nombre_filtro.label}}
+                                {{formProductosFiltro.nombre_filtro}}
+                            </div>
+                            <div class="col-3 mb-3">
+                                {{formProductosFiltro.precio_min.label}}
+                                {{formProductosFiltro.precio_min}}
+                            </div>
+                            <div class="col-3 mb-3">
+                                {{formProductosFiltro.precio_max.label}}
+                                {{formProductosFiltro.precio_max}}
+                            </div>
+                            <div class="col-3 mb-3">
+                                {{formProductosFiltro.activo_filtro.label}}
+                                {{formProductosFiltro.activo_filtro}}
+                            </div>
+                            <div class="col-2">
+                                <button id="filtrar_productos" type="button" onclick="" class="btn btn-primary">Filtrar</button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                <div class="col-12 mt-5">
                     <table class="table" id="tabla">
-                        <tr>
-                            <th>Nombre de Producto</th>
-                            <th>Descripción</th>
-                            <th>Precio</th>
-                            <th>Archivo</th>
-                            <th>Acciones</th>
-                        </tr>
+                        <thead>
+                            <tr>
+                                <th>Nombre de Producto</th>
+                                <th>Descripción</th>
+                                <th>Precio</th>
+                                <th>Archivo</th>
+                                <th>Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody id="productos_body">
                             {% if productos %}
                                 {% for producto in productos %}
-                                    <tr id="{{producto.id}}_fila">
-                                        <td id="{{producto.id}}_nombre">{{ producto.nombre }}</td>
-                                        <td id="{{producto.id}}_descripcion">{{ producto.descripcion }}</td>
-                                        <td id="{{producto.id}}_precio">{{ producto.precio }}</td>
-                                        {% if producto.archivos %}
+                                <tr id="{{producto.id}}_fila">
+                                    <td id="{{producto.id}}_nombre">{{ producto.nombre }}</td>
+                                    <td id="{{producto.id}}_descripcion">{{ producto.descripcion }}</td>
+                                    <td id="{{producto.id}}_precio">{{ producto.precio }}</td>
+                                    {% if producto.archivos %}
                                         <td id="{{producto.id}}_archivo"><a target="blank" href="{{ producto.archivos.url }}">{{ producto.archivos.name }}</a></td>
-                                        {%else %}
+                                    {%else %}
                                         <td id="{{producto.id}}_archivo">Sin archivo</td>
-                                        {% endif %}
-                                        <td>
-                                            <button class="btn btn-primary" onclick="editar({{producto.id}})"> Editar </button>
-                                            <button class="btn btn-danger" onclick="eliminar({{producto.id}})"> Eliminar </button>
-                                        </td>
-                                    </tr>
+                                    {% endif %}
+                                    <td>
+                                        <button class="btn btn-primary" onclick="editar({{producto.id}})"> Editar </button>
+                                        <button class="btn btn-danger" onclick="eliminar({{producto.id}})"> Eliminar </button>
+                                    </td>
+                                </tr>
                                 {% endfor %}
                             {% else %}
                             <tr>
                                 <th>NO HAY PRODUCTOS REGISTRADOS</th>
                             <tr>
-
                             {% endif %}
-
+                        </tbody>
                     </table>
                 </div>
                 <hr>
@@ -80,6 +108,9 @@
     {% endblock content%}
 {% block scripts %}
 <script type="text/javascript">
+    $(document).ready(function(){
+
+   
     function eliminar(id){
         if(confirm('¿Está seguro de que quiere eliminar el producto? id: '+id)){
             $.ajax({
@@ -159,6 +190,58 @@
     $("#id_precio").on('input',function(){
         $(this).removeClass("is-invalid")
     });
+
+    $("#filtrar_productos").click(function(){
+        var nombre = $('#id_nombre_filtro').val()
+        var precio_min = $('#id_precio_min').val()
+        var precio_max = $('#id_precio_max').val()
+        var activo = $('#id_activo_filtro').is(":checked")
+
+        $.ajax({
+            method: "POST",
+            url: "{% url 'ajaxFiltro' %}",
+            headers: {
+                'X-CSRFToken':'{{ csrf_token }}'
+            },
+            data: {
+                "nombre":nombre,
+                "precio_min":precio_min,
+                "precio_max":precio_max,
+                "activo":activo
+                },
+            success: function(response){
+                productos = response["productos"];
+                
+                if(Object.keys(productos).length > 0){
+                    $('#productos_body').html("")
+                    tbody=""
+                    $.each( productos, function( key, value ){
+                        nombre_archivo = value.archivo_nombre != "" ? value.archivo_nombre : "Sin archivo"
+                        url_archivo = value.archivo_url != "" ? value.archivo_url : "#"
+                        tr = '<tr id="'+key+'_fila">'+
+                                    '<td id="'+key+'_nombre">'+value.nombre+'</td>'+
+                                    '<td id="'+key+'_descripcion">'+value.descripcion+'</td>'+
+                                    '<td id="'+key+'_precio">'+value.precio+'</td>'+
+                                        '<td id="'+key+'_archivo"><a target="blank" href="'+url_archivo+'">'+nombre_archivo+'</a></td>'+
+                                    '<td>'+
+                                        '<button class="btn btn-primary" onclick="editar('+key+')"> Editar </button>'+
+                                        '<button class="btn btn-danger" onclick="eliminar('+key+'})"> Eliminar </button>'+
+                                    '</td>'+
+                                '</tr>'
+                        tbody += tr
+
+                    });
+                    $('#productos_body').html(tbody)
+                }
+                else{
+                    $('#productos_body').html(
+                    '<tr><td></td><td></td><td><h3>No se encontraron resultados</h3></td>'+
+                    '<td></td><td></td></tr>');
+                }
+            }
+        });
+    });
+
     $("#boton_actualizar").click(function(){
         
         let id = $("#id_formulario").val()
